@@ -1,0 +1,11 @@
+---
+const {offre} = Astro.props;
+---
+<div
+    class="border border-gray-200 rounded-lg p-6 shadow-md hover:-translate-y-1 transition-all cursor-pointer"
+    >
+<div class="flex items-center gap-2 mb-2">
+        <strong class="text-lg">{offre.nomMaison}</strong>
+    </div>
+    <p class="text-gray-600 text-sm mb-4">{offre.prix}</p>
+</div>
