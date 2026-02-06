@@ -5,14 +5,6 @@ import { getImageUrl } from "../Backend.mjs";
 const { record, recordImage } = Astro.props;
 
 const imageURL = await getImageUrl(record, recordImage);
----
+<PbImage record={record} recordImage={recordImage} />
 
-{
-    imageURL && (
-        <Image
-            src={imageURL}
-            alt={record.nomMaison || "Image"}
-            inferSize={true}
-        />
-    )
-}
+-

@@ -1,4 +1,5 @@
 ---
+
 import Layout from "../../layouts/Layout.astro";
 import OffresCard from "../../components/OffresCard.astro";
 import { getOffres } from "../../Backend.mjs";
@@ -9,7 +10,7 @@ const offres = await getOffres();
     <h1>Affichage des offres</h1>
     {
         offres.map((Offre: any) => (
-            <div class="offre" data-favori={(Offre as any).favori.toString()}>
+            <div class="offre" data-favori={(Offre as any).favori?.toString() ?? "false"}>
                 <OffresCard offre={Offre} />
             </div>
         ))
