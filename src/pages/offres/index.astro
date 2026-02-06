@@ -1,0 +1,44 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import OffresCard from "../../components/OffresCard.astro";
+import { getOffres } from "../../Backend.mjs";
+const offres = await getOffres();
+---
+
+<Layout titre="Page des offres">
+    <h1>Affichage des offres</h1>
+    {
+        offres.map((Offre: any) => (
+            <div class="offre" data-favori={(Offre as any).favori.toString()}>
+                <OffresCard offre={Offre} />
+            </div>
+        ))
+    }
+</Layout>
+<button id="favori-button" class="bg-slate-600 rounded-lg text-white p-2"
+    >Afficher les favoris</button
+>
+<div>
+    <script>
+        const button = document.getElementById("favori-button");
+        let showOnlyFavorites = false;
+
+        button?.addEventListener("click", () => {
+            showOnlyFavorites = !showOnlyFavorites;
+            const offres = document.querySelectorAll(".offre");
+
+            offres.forEach((offre) => {
+                const offresElement = offre as HTMLElement;
+                const isFavori = offresElement.dataset.favori === "true";
+
+                if (showOnlyFavorites) {
+                    offresElement.style.display = isFavori ? "block" : "none";
+                    button.textContent = "Afficher tout";
+                } else {
+                    offresElement.style.display = "block";
+                    button.textContent = "Afficher les favoris";
+                }
+            });
+        });
+    </script>
+</div>

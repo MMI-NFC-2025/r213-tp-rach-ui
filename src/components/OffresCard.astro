@@ -1,4 +1,6 @@
 ---
+import PbImage from "./PbImage.astro";
+
 const { offre } = Astro.props;
 ---
 
@@ -10,7 +12,6 @@ const { offre } = Astro.props;
     </div>
     <p class="text-gray-600 text-sm mb-4">{offre.prix}</p>
 nbChambres: {offre.nbChambres} | SDB: {offre.nbSdb} | Surface: {offre.surface}m²
-    <div class="mt-4">
-        <img src={offre.imgUrl} alt={offre.nomMaison} class="w-full h-auto rounded" />
+<PbImage record={offre} recordImage={offre.images[0]}  />
     favorite: {offre.favori ? "Oui" : "Non"}
 </div>
