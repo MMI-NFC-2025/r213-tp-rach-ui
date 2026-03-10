@@ -1,0 +1,43 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import OffreCard from "../../../components/OffreCard.astro";
+import { getOffres } from "../../../backend.mjs";
+
+const offres = await getOffres();
+---
+
+<Layout titre="Favoris — ImmoPlus">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-slate-900">❤️ Favoris</h1>
+        <a href="/offres" class="text-sm text-slate-600 hover:text-blue-600"
+            >← Retour aux offres</a
+        >
+    </div>
+    <p id="favCount" class="text-slate-500 text-sm mb-4"></p>
+    <p id="emptyMsg" class="hidden text-slate-500">Aucun favori pour l'instant.</p>
+    <div id="favGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {offres.map((offre) => <OffreCard offre={offre} />)}
+    </div>
+</Layout>
+
+<script>
+    const KEY = "immoplus_favorites";
+    const favs = JSON.parse(localStorage.getItem(KEY) || "[]");
+    const cards = document.querySelectorAll("#favGrid .offre-card");
+    let count = 0;
+    cards.forEach((card) => {
+        const btn = card.querySelector(".favoriteButton");
+        if (!btn) return;
+        const id = JSON.parse(btn.dataset.offre).id;
+        if (favs.includes(id)) {
+            count++;
+        } else {
+            card.style.display = "none";
+        }
+    });
+    document.getElementById("favCount").textContent = count + " offre(s)";
+    if (count === 0) {
+        document.getElementById("emptyMsg").classList.remove("hidden");
+        document.getElementById("favGrid").classList.add("hidden");
+    }
+</script>

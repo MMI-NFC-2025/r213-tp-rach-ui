@@ -1,0 +1,66 @@
+---
+import PbImages from "./PbImages.astro";
+
+const { offre } = Astro.props;
+---
+
+<article
+    class="offre-card relative border border-slate-200 rounded-lg shadow-sm overflow-hidden bg-white hover:-translate-y-1 transition-transform"
+>
+    <PbImages record={offre} recordImage="Images" />
+    <button
+        class="favoriteButton absolute top-2 right-2 bg-white rounded-full p-1 shadow"
+        data-offre={JSON.stringify(offre)}
+    >
+        <img
+            class="favorite-icon w-6 h-6"
+            src={(offre.favori ?? false)
+                ? "/icons/favorite_filled.svg"
+                : "/icons/favorite.svg"}
+            alt="favori"
+        />
+    </button>
+    <div class="p-4">
+        <h2 class="font-semibold text-slate-900 text-lg mb-1">
+            {offre.nomMaison}
+        </h2>
+        <p class="text-slate-700 font-bold mb-1">
+            {
+                offre.Prix != null
+                    ? Number(offre.Prix).toLocaleString("fr-FR")
+                    : "—"
+            } €
+        </p>
+        <a
+            href={`/offres/${offre.id}`}
+            class="inline-block bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            >Voir l'offre</a
+        >
+    </div>
+</article>
+
+<script>
+    const KEY = "immoplus_favorites";
+    function getFavs() {
+        try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+        catch { return []; }
+    }
+    function saveFavs(favs) {
+        localStorage.setItem(KEY, JSON.stringify(favs));
+    }
+    document.querySelectorAll(".favoriteButton").forEach((button) => {
+        const offre = JSON.parse(button.dataset.offre);
+        const icon = button.querySelector(".favorite-icon");
+        const isFav = getFavs().includes(offre.id);
+        icon.src = isFav ? "/icons/favorite_filled.svg" : "/icons/favorite.svg";
+        button.addEventListener("click", () => {
+            const favs = getFavs();
+            const idx = favs.indexOf(offre.id);
+            if (idx === -1) { favs.push(offre.id); }
+            else { favs.splice(idx, 1); }
+            saveFavs(favs);
+            const nowFav = idx === -1;
+            icon.src = nowFav ? "/icons/favorite_filled.svg" : "/icons/favorite.svg";
+        });
+    });
+</script>

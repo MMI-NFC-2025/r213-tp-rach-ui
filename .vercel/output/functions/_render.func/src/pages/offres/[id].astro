@@ -1,0 +1,88 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PbImages from "../../components/PbImages.astro";
+import { getOffre } from "../../backend.mjs";
+
+const { id } = Astro.params;
+const offre = await getOffre(id);
+
+if (!offre) {
+    return Astro.redirect("/offres");
+}
+---
+
+<Layout titre={`${offre.nomMaison} — ImmoPlus`}>
+    <a
+        href="/offres"
+        class="text-sm text-slate-600 hover:text-blue-600 mb-6 inline-block"
+        >← Retour aux offres</a
+    >
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <div class="relative">
+            <PbImages record={offre} recordImage="Images" />
+            <button
+                class="favoriteButton absolute top-3 right-3 bg-white rounded-full p-2 shadow"
+                data-offre={JSON.stringify(offre)}
+            >
+                <img
+                    class="favorite-icon w-7 h-7"
+                    src={(offre.favori ?? false)
+                        ? "/icons/favorite_filled.svg"
+                        : "/icons/favorite.svg"}
+                    alt="favori"
+                />
+            </button>
+        </div>
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-slate-900 mb-2">
+                {offre.nomMaison}
+            </h1>
+            <p class="text-2xl font-bold text-blue-600 mb-4">
+                {
+                    offre.Prix != null
+                        ? Number(offre.Prix).toLocaleString("fr-FR")
+                        : "—"
+                } €
+            </p>
+            <div
+                class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 text-sm text-slate-700"
+            >
+                <div class="bg-slate-50 rounded p-3">
+                    <p class="text-slate-400 text-xs mb-1">Chambres</p>
+                    <p class="font-semibold">{offre.nbChambres}</p>
+                </div>
+                <div class="bg-slate-50 rounded p-3">
+                    <p class="text-slate-400 text-xs mb-1">Salles de bain</p>
+                    <p class="font-semibold">{offre.nbSdb}</p>
+                </div>
+            </div>
+            <p class="text-slate-600">{offre.Adresse}</p>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    const KEY = "immoplus_favorites";
+    function getFavs() {
+        try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+        catch { return []; }
+    }
+    function saveFavs(favs) {
+        localStorage.setItem(KEY, JSON.stringify(favs));
+    }
+    document.querySelectorAll(".favoriteButton").forEach((button) => {
+        const offre = JSON.parse(button.dataset.offre);
+        const icon = button.querySelector(".favorite-icon");
+        const isFav = getFavs().includes(offre.id);
+        icon.src = isFav ? "/icons/favorite_filled.svg" : "/icons/favorite.svg";
+        button.addEventListener("click", () => {
+            const favs = getFavs();
+            const idx = favs.indexOf(offre.id);
+            if (idx === -1) { favs.push(offre.id); }
+            else { favs.splice(idx, 1); }
+            saveFavs(favs);
+            const nowFav = idx === -1;
+            icon.src = nowFav ? "/icons/favorite_filled.svg" : "/icons/favorite.svg";
+        });
+    });
+</script>

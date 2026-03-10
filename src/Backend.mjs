@@ -1,19 +1,75 @@
-import PocketBase from 'pocketbase';
+import PocketBase from "pocketbase";
+const pb = new PocketBase("http://127.0.0.1:8090");
 
-const db = new PocketBase('http://127.0.0.1:8090');
+export function getImageUrl(record, imageField) {
+    const file = Array.isArray(record[imageField]) ? record[imageField][0] : record[imageField];
+    return file ? pb.files.getURL(record, file) : null;
+}
 
 export async function getOffres() {
+    try { return await pb.collection("maison").getFullList({ sort: "-created" }); }
+    catch (error) { return []; }
+}
+
+export async function getOffre(id) {
+    try { return await pb.collection("maison").getOne(id); }
+    catch (error) { return null; }
+}
+
+export async function getOffresBySurface(surfaceMin) {
+    try { return await pb.collection("maison").getFullList({ sort: "-created" }); }
+    catch (error) { return []; }
+}
+
+export async function getOffresSurface50() {
+    try { return await pb.collection("maison").getFullList({ sort: "-created" }); }
+    catch (error) { return []; }
+}
+
+export async function PrixInferieur() {
+    try { return await pb.collection("maison").getFullList({ filter: "Prix < 100000", sort: "-created" }); }
+    catch (error) { return []; }
+}
+
+export async function addOffre(house) {
     try {
-        let data = await db.collection('maison').getFullList({
-            sort: '-created',
-        });
-        return data;
+        await pb.collection("maison").create(house);
+        return { success: true, message: "Offre ajoutée avec succès" };
     } catch (error) {
-        console.log('Une erreur est survenue en lisant la liste des maisons', error);
-        return [];
+        return { success: false, message: "Une erreur est survenue en ajoutant la maison" };
     }
 }
 
-export async function getImageUrl(record, recordImage) {
-    return db.files.getURL(record, recordImage);
+export async function filterByPrix(minPrix, maxPrix) {
+    try { return await pb.collection("maison").getFullList({ filter: `Prix >= ${minPrix} && Prix <= ${maxPrix}`, sort: "-created" }); }
+    catch (error) { return []; }
+}
+
+export async function getFavoris() {
+    try { return await pb.collection("maison").getFullList({ sort: "-created" }); }
+    catch (error) { return []; }
+}
+
+export async function setFavori(house) {
+    try { await pb.collection("maison").update(house.id, { favori: !house.favori }); }
+    catch (error) { }
+}
+
+export async function getAgents() {
+    try { return await pb.collection("agent").getFullList({ sort: "-created" }); }
+    catch (error) { return []; }
+}
+
+export async function getAgent(id) {
+    try { return await pb.collection("agent").getOne(id); }
+    catch (error) { return null; }
+}
+
+export async function getOffresByAgent(relationIds) {
+    if (!relationIds || relationIds.length === 0) return [];
+    try {
+        const filter = relationIds.map(id => `id = "${id}"`).join(" || ");
+        return await pb.collection("maison").getFullList({ filter, sort: "-created" });
+    }
+    catch (error) { return []; }
 }
