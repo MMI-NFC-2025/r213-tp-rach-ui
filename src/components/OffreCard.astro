@@ -42,8 +42,11 @@ const { offre } = Astro.props;
 <script>
     const KEY = "immoplus_favorites";
     function getFavs() {
-        try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
-        catch { return []; }
+        try {
+            return JSON.parse(localStorage.getItem(KEY) || "[]");
+        } catch {
+            return [];
+        }
     }
     function saveFavs(favs) {
         localStorage.setItem(KEY, JSON.stringify(favs));
@@ -56,11 +59,16 @@ const { offre } = Astro.props;
         button.addEventListener("click", () => {
             const favs = getFavs();
             const idx = favs.indexOf(offre.id);
-            if (idx === -1) { favs.push(offre.id); }
-            else { favs.splice(idx, 1); }
+            if (idx === -1) {
+                favs.push(offre.id);
+            } else {
+                favs.splice(idx, 1);
+            }
             saveFavs(favs);
             const nowFav = idx === -1;
-            icon.src = nowFav ? "/icons/favorite_filled.svg" : "/icons/favorite.svg";
+            icon.src = nowFav
+                ? "/icons/favorite_filled.svg"
+                : "/icons/favorite.svg";
         });
     });
 </script>

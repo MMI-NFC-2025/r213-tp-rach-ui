@@ -14,8 +14,13 @@ const offres = await getOffres();
         >
     </div>
     <p id="favCount" class="text-slate-500 text-sm mb-4"></p>
-    <p id="emptyMsg" class="hidden text-slate-500">Aucun favori pour l'instant.</p>
-    <div id="favGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <p id="emptyMsg" class="hidden text-slate-500">
+        Aucun favori pour l'instant.
+    </p>
+    <div
+        id="favGrid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
         {offres.map((offre) => <OffreCard offre={offre} />)}
     </div>
 </Layout>
